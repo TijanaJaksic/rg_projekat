@@ -34,11 +34,10 @@ float lastFrame = 0.0f;
 
 // light
 glm::vec3 lampColor(1.0, 1.0, 0.5);
-glm::vec3 lampPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lampPos;
 glm::vec3 backpackPos;
 
-int main()
-{
+int main() {
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -76,6 +75,8 @@ int main()
 
     // ENABLE DEPTH TESTING
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     Shader ourShader("resources/shaders/mainShader.vs", "resources/shaders/mainShader.fs");
     Shader lamp("resources/shaders/lampCube.vs", "resources/shaders/lampCube.fs");
@@ -83,7 +84,10 @@ int main()
     Model backpack("resources/objects/cottage/cottage_blender.obj");
     backpack.SetShaderTextureNamePrefix("material.");
 
-        float vertices[] = {
+    Model vodooDoll("resources/objects/vodoo/vodoo_model1.obj");
+    vodooDoll.SetShaderTextureNamePrefix("material.");
+
+    float vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
          0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
          0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
@@ -139,6 +143,12 @@ int main()
     glEnableVertexAttribArray(0);
 
     backpackPos = camera.Position + 5.0f*camera.Front;
+    lampPos = backpackPos + glm::vec3(-3.0f, 0.1f, 1.0f);
+    std::vector<glm::vec3> dollPositions;
+    dollPositions.push_back(camera.Position + 3.0f*camera.Front + camera.Right);
+    dollPositions.push_back(camera.Position + 2.0f*camera.Front);
+    dollPositions.push_back(camera.Position + 2.6f*camera.Front);
+    dollPositions.push_back(camera.Position + 1.7f*camera.Front - camera.Right*0.7f);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -147,9 +157,16 @@ int main()
         lastFrame = currFrame;
         processInput(window);
 
+        std::map <float, glm::vec3> sortedDollPositions;
+        for(unsigned int i = 0; i < dollPositions.size(); i++) {
+            float distance = glm::length(camera.Position - dollPositions[i]);
+            sortedDollPositions[distance] = dollPositions[i];
+        }
+
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // !!!
 
+        // draw the house
         ourShader.use();
 
         glm::mat4 view          = glm::mat4(1.0f);
@@ -192,6 +209,7 @@ int main()
 
         backpack.Draw(ourShader);
 
+        // draw the lamp
         lamp.use();
         lamp.setMat4("projection", projection);
         lamp.setMat4("view", view);
@@ -204,6 +222,17 @@ int main()
         glBindVertexArray(lamp_VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
+        // draw the dolls
+        ourShader.use();
+        ourShader.setFloat("material.shininess", 10.0f);
+        for(std::map<float, glm::vec3>::reverse_iterator it = sortedDollPositions.rbegin(); it != sortedDollPositions.rend(); ++it) {
+            m = glm::mat4(1.0f);
+            m = glm::translate(m, it->second);
+            m = glm::rotate(m, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            m = glm::scale(m, glm::vec3(0.1f));
+            ourShader.setMat4("model", m);
+            vodooDoll.Draw(ourShader);
+        }
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
