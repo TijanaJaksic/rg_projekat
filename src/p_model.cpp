@@ -77,8 +77,8 @@ int main()
     // ENABLE DEPTH TESTING
     glEnable(GL_DEPTH_TEST);
 
-    Shader ourShader("resources/shaders/2.5.4.multiple.vs", "resources/shaders/2.5.4.multiple.fs");
-    Shader lamp("resources/shaders/2.1.light_cube.vs", "resources/shaders/2.1.light_cube.fs");
+    Shader ourShader("resources/shaders/mainShader.vs", "resources/shaders/mainShader.fs");
+    Shader lamp("resources/shaders/lampCube.vs", "resources/shaders/lampCube.fs");
 
     Model backpack("resources/objects/cottage/cottage_blender.obj");
     backpack.SetShaderTextureNamePrefix("material.");
