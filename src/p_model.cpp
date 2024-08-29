@@ -35,7 +35,7 @@ float lastFrame = 0.0f;
 // light
 glm::vec3 lampColor(1.0, 1.0, 0.5);
 glm::vec3 lampPos;
-glm::vec3 backpackPos;
+glm::vec3 cottagePos;
 
 int main() {
     // glfw: initialize and configure
@@ -81,8 +81,8 @@ int main() {
     Shader ourShader("resources/shaders/mainShader.vs", "resources/shaders/mainShader.fs");
     Shader lamp("resources/shaders/lampCube.vs", "resources/shaders/lampCube.fs");
 
-    Model backpack("resources/objects/cottage/cottage_blender.obj");
-    backpack.SetShaderTextureNamePrefix("material.");
+    Model cottage("resources/objects/cottage/cottage_blender.obj");
+    cottage.SetShaderTextureNamePrefix("material.");
 
     Model vodooDoll("resources/objects/vodoo/vodoo_model1.obj");
     vodooDoll.SetShaderTextureNamePrefix("material.");
@@ -142,8 +142,8 @@ int main() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    backpackPos = camera.Position + 5.0f*camera.Front;
-    lampPos = backpackPos + glm::vec3(-3.0f, 0.1f, 1.0f);
+    cottagePos = camera.Position + 5.0f*camera.Front;
+    lampPos = cottagePos + glm::vec3(-3.0f, 0.1f, 1.0f);
     std::vector<glm::vec3> dollPositions;
     dollPositions.push_back(camera.Position + 3.0f*camera.Front + camera.Right);
     dollPositions.push_back(camera.Position + 2.0f*camera.Front);
@@ -172,7 +172,7 @@ int main() {
         glm::mat4 view          = glm::mat4(1.0f);
         glm::mat4 projection    = glm::mat4(1.0f);
         glm::mat4 m = glm::mat4(1.0f);
-        m = glm::translate(m, backpackPos);
+        m = glm::translate(m, cottagePos);
         m = glm::scale(m, glm::vec3(0.1f));
         view  = camera.GetViewMatrix();
         projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -207,7 +207,7 @@ int main() {
 
         ourShader.setFloat("material.shininess", 150.0f);
 
-        backpack.Draw(ourShader);
+        cottage.Draw(ourShader);
 
         // draw the lamp
         lamp.use();
