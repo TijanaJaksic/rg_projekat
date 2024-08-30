@@ -9,10 +9,10 @@
 #include <sstream>
 
 std::string readFileContents(std::string path) {
-    std::ifstream in(path);
+    std::ifstream in(path); // otvaramo input file stream za fajl na koga pokazuje path
     std::stringstream buffer;
     buffer << in.rdbuf();
-    return buffer.str();
+    return buffer.str(); // vratimo sadrzaj fajla u vidu stringa
 }
 
 
