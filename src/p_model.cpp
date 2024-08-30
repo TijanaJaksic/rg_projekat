@@ -27,7 +27,7 @@ unsigned int loadCubemap(std::vector<std::string> faces);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
 
-Camera camera(glm::vec3(0.0f, 1.0f, 1.0f));
+Camera camera(glm::vec3(0.0f, 0.2f, 1.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -38,8 +38,6 @@ float lastFrame = 0.0f;
 
 // light
 glm::vec3 lampColor(1.0, 1.0, 0.5);
-glm::vec3 lampPos;
-glm::vec3 cottagePos;
 bool flashLightOn = true;
 
 int main() {
@@ -175,8 +173,10 @@ int main() {
     lampStand.SetShaderTextureNamePrefix("material.");
 
     // PREPARING STARTING POSITIONS OF OBJECTS ON THE SCENE
+    glm::vec3 lampPos;
+    glm::vec3 cottagePos;
     cottagePos = camera.Position + 5.0f*camera.Front - 0.2f*camera.Up;
-    lampPos = cottagePos + glm::vec3(-3.0f, 1.0f, 1.0f) - 0.2f*camera.Up;
+    lampPos = cottagePos + glm::vec3(-3.0f, 1.0f, 1.0f) - 0.1f*camera.Up;
     glm::vec3 lampStandPos = lampPos - glm::vec3(0.0f, 0.5f, 0.0f);
     std::vector<glm::vec3> dollPositions;
     dollPositions.push_back(camera.Position + 3.0f*camera.Front + camera.Right - 0.2f*camera.Up);
