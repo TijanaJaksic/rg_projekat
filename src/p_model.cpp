@@ -20,33 +20,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-unsigned int loadCubemap(std::vector<std::string> faces) {
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-
-    int width, height, nrChannels;
-    unsigned char* data;
-
-    for(int i = 0; i < faces.size(); i++) {
-        data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
-        if(data) {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        } else {
-            std::cerr << "Failed to load cube map texture face." << std::endl;
-            return -1;
-        }
-        stbi_image_free(data);
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-    return textureID;
-}
+unsigned int loadCubemap(std::vector<std::string> faces);
 
 
 // settings
@@ -115,7 +89,7 @@ int main() {
     glFrontFace(GL_CCW);
 
     Shader ourShader("resources/shaders/mainShader.vs", "resources/shaders/mainShader.fs");
-    Shader lampShader("resources/shaders/lampCube.vs", "resources/shaders/lampCube.fs");
+    Shader lampShader("resources/shaders/lamp.vs", "resources/shaders/lamp.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
 
     float skyboxVertices[] = {
@@ -201,14 +175,14 @@ int main() {
     lampStand.SetShaderTextureNamePrefix("material.");
 
     // PREPARING STARTING POSITIONS OF OBJECTS ON THE SCENE
-    cottagePos = camera.Position + 5.0f*camera.Front;
-    lampPos = cottagePos + glm::vec3(-3.0f, 1.0f, 1.0f);
+    cottagePos = camera.Position + 5.0f*camera.Front - 0.2f*camera.Up;
+    lampPos = cottagePos + glm::vec3(-3.0f, 1.0f, 1.0f) - 0.2f*camera.Up;
     glm::vec3 lampStandPos = lampPos - glm::vec3(0.0f, 0.5f, 0.0f);
     std::vector<glm::vec3> dollPositions;
-    dollPositions.push_back(camera.Position + 3.0f*camera.Front + camera.Right);
-    dollPositions.push_back(camera.Position + 2.0f*camera.Front);
-    dollPositions.push_back(camera.Position + 2.6f*camera.Front);
-    dollPositions.push_back(camera.Position + 1.7f*camera.Front - camera.Right*0.7f);
+    dollPositions.push_back(camera.Position + 3.0f*camera.Front + camera.Right - 0.2f*camera.Up);
+    dollPositions.push_back(camera.Position + 2.0f*camera.Front - 0.2f*camera.Up);
+    dollPositions.push_back(camera.Position + 2.6f*camera.Front - 0.2f*camera.Up);
+    dollPositions.push_back(camera.Position + 1.7f*camera.Front - camera.Right*0.7f - 0.2f*camera.Up);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -393,5 +367,33 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
         flashLightOn = !flashLightOn;
+}
+
+unsigned int loadCubemap(std::vector<std::string> faces) {
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+    int width, height, nrChannels;
+    unsigned char* data;
+
+    for(int i = 0; i < faces.size(); i++) {
+        data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+        if(data) {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        } else {
+            std::cerr << "Failed to load cube map texture face." << std::endl;
+            return -1;
+        }
+        stbi_image_free(data);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    return textureID;
 }
 
