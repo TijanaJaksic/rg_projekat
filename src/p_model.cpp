@@ -86,7 +86,7 @@ int main() {
     glFrontFace(GL_CCW);
 
     Shader ourShader("resources/shaders/mainShader.vs", "resources/shaders/mainShader.fs");
-    Shader lamp("resources/shaders/lampCube.vs", "resources/shaders/lampCube.fs");
+    Shader lampShader("resources/shaders/lampCube.vs", "resources/shaders/lampCube.fs");
 
     Model cottage("resources/objects/cottage/cottage_blender.obj");
     cottage.SetShaderTextureNamePrefix("material.");
@@ -94,63 +94,16 @@ int main() {
     Model vodooDoll("resources/objects/vodoo/vodoo_model1.obj");
     vodooDoll.SetShaderTextureNamePrefix("material.");
 
-    float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
+    Model lamp("resources/objects/lamp/lamp.obj");
+    lamp.SetShaderTextureNamePrefix("material.");
 
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
+    Model lampStand("resources/objects/lampStand/lamp.obj");
+    lampStand.SetShaderTextureNamePrefix("material.");
 
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f
-    };
-
-    // lamp object:
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    unsigned int lamp_VAO;
-    glGenVertexArrays(1, &lamp_VAO);
-    glBindVertexArray(lamp_VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
+    // PREPARING STARTING POSITIONS OF OBJECTS ON THE SCENE
     cottagePos = camera.Position + 5.0f*camera.Front;
-    lampPos = cottagePos + glm::vec3(-3.0f, 0.1f, 1.0f);
+    lampPos = cottagePos + glm::vec3(-3.0f, 1.0f, 1.0f);
+    glm::vec3 lampStandPos = lampPos - glm::vec3(0.0f, 0.5f, 0.0f);
     std::vector<glm::vec3> dollPositions;
     dollPositions.push_back(camera.Position + 3.0f*camera.Front + camera.Right);
     dollPositions.push_back(camera.Position + 2.0f*camera.Front);
@@ -173,7 +126,7 @@ int main() {
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // !!!
 
-        // draw the house
+        // DRAW THE COTTAGE
         ourShader.use();
 
         glm::mat4 view          = glm::mat4(1.0f);
@@ -222,18 +175,26 @@ int main() {
 
         cottage.Draw(ourShader);
 
-        // draw the lamp
-        lamp.use();
-        lamp.setMat4("projection", projection);
-        lamp.setMat4("view", view);
+        // DRAW THE LAMP
+        lampShader.use();
+        lampShader.setMat4("projection", projection);
+        lampShader.setMat4("view", view);
         m = glm::mat4(1.0f);
         m = glm::translate(m, lampPos);
         m = glm::scale(m, glm::vec3(0.2f));
-        lamp.setMat4("model", m);
-        lamp.setVec3("lightCubeColor", lampColor);
+        lampShader.setMat4("model", m);
+        lampShader.setVec3("lightCubeColor", lampColor);
 
-        glBindVertexArray(lamp_VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        lamp.Draw(lampShader);
+        // DRAW THE LAMP STAND
+        ourShader.use();
+        ourShader.setMat4("projection", projection);
+        ourShader.setMat4("view", view);
+        m = glm::mat4(1.0f);
+        m = glm::translate(m, lampStandPos);
+        m = glm::scale(m, glm::vec3(0.2f));
+        ourShader.setMat4("model", m);
+        lampStand.Draw(ourShader);
 
         // draw the dolls
         ourShader.use();
@@ -256,7 +217,6 @@ int main() {
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
     //ourShader.deleteProgram();
-    glDeleteBuffers(1, &VBO);
 
     glfwTerminate();
     return 0;
