@@ -18,6 +18,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -36,6 +37,7 @@ float lastFrame = 0.0f;
 glm::vec3 lampColor(1.0, 1.0, 0.5);
 glm::vec3 lampPos;
 glm::vec3 cottagePos;
+bool flashLightOn = true;
 
 int main() {
     // glfw: initialize and configure
@@ -62,6 +64,7 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetKeyCallback(window, key_callback);
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -77,6 +80,10 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 
     Shader ourShader("resources/shaders/mainShader.vs", "resources/shaders/mainShader.fs");
     Shader lamp("resources/shaders/lampCube.vs", "resources/shaders/lampCube.fs");
@@ -196,9 +203,15 @@ int main() {
         // spot light
         ourShader.setVec3("spotLight.position", camera.Position);
         ourShader.setVec3("spotLight.direction", camera.Front);
-        ourShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-        ourShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-        ourShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+        if(flashLightOn) {
+            ourShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+            ourShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+            ourShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+        } else {
+            ourShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+            ourShader.setVec3("spotLight.diffuse", 0.0f, 0.0f, 0.0f);
+            ourShader.setVec3("spotLight.specular", 0.0f, 0.0f, 0.0f);
+        }
         ourShader.setFloat("spotLight.constant", 1.0f);
         ourShader.setFloat("spotLight.linear", 0.09f);
         ourShader.setFloat("spotLight.quadratic", 0.032f);
@@ -297,3 +310,9 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+        flashLightOn = !flashLightOn;
+}
+
