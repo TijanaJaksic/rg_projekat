@@ -13,18 +13,21 @@
 #include <rg/Error.h>
 #include <common.h>
 #include <glm/glm.hpp>
+
 class Shader {
     unsigned int m_Id;
 public:
     Shader(std::string vertexShaderPath, std::string fragmentShaderPath) {
-        appendShaderFolderIfNotPresent(vertexShaderPath);
-        appendShaderFolderIfNotPresent(fragmentShaderPath);
+        // mozda implementiraj kasnije
+        // appendShaderFolderIfNotPresent(vertexShaderPath);
+        // appendShaderFolderIfNotPresent(fragmentShaderPath);
+
         // build and compile our shader program
         // ------------------------------------
         // vertex shader
         std::string vsString = readFileContents(vertexShaderPath);
         ASSERT(!vsString.empty(), "Vertex shader source is empty!");
-        const char* vertexShaderSource = vsString.c_str();
+        const char* vertexShaderSource = vsString.c_str(); // treba nam c-ovski string!
         int vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
         glCompileShader(vertexShader);
@@ -41,7 +44,7 @@ public:
         int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         std::string fsString = readFileContents(fragmentShaderPath);
         ASSERT(!fsString.empty(), "Fragment shader empty!");
-        const char* fragmentShaderSource = fsString.c_str();
+        const char* fragmentShaderSource = fsString.c_str(); // treba nam c-ovski string!
         glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
         glCompileShader(fragmentShader);
         // check for shader compile errors
@@ -131,13 +134,11 @@ public:
     {
         glUniformMatrix4fv(glGetUniformLocation(m_Id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
+
     void deleteProgram() {
         glDeleteProgram(m_Id);
         m_Id = 0;
     }
-
-
-
 };
 
 

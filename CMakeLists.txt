@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD 14)
 list(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -O3")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-file(GLOB SOURCES "src/*.cpp" "src/*.c" src/main.cpp)
+file(GLOB SOURCES "src/*.cpp" "src/*.c" src/project.cpp)
 file(GLOB HEADERS "include/*.h" "include/*.hpp")
 
 find_package(OpenGL REQUIRED)
@@ -44,24 +44,7 @@ include_directories(${CMAKE_BINARY_DIR}/configuration)
 include_directories(include/)
 add_executable(${PROJECT_NAME}
         ${SOURCES}
-        src/ucim.cpp
-        src/testiram.cpp
-        src/03textures.cpp
-        src/03viseTekstura.cpp
-        src/03texClass.cpp
-        src/03texVezba.cpp
-        src/04Transformations.cpp
-        src/05Koor3D.cpp
-        src/05Kocka.cpp
-        src/05MultipleKocka.cpp
-        src/2.2.difuse_light.cpp
-        resources/shaders/2.1.basic_lighting.fs
-        src/2.5.dir_lighting.cpp
-        src/2.5.2.point.cpp
-        src/2.5.3.spot.cpp
-        src/2.5.4.multiple.cpp
-        src/model.cpp
-        src/p_model.cpp)
+        src/project.cpp)
 
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 
