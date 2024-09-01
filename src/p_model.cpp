@@ -37,7 +37,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // light
-glm::vec3 lampColor(1.0, 1.0, 0.5);
+glm::vec3 lampColor(100.0f, 100.0f, 50.0f);
 bool flashLightOn = true;
 
 int main() {
@@ -90,6 +90,7 @@ int main() {
     Shader lampShader("resources/shaders/lamp.vs", "resources/shaders/lamp.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
 
+    // napravimo skybox:
     float skyboxVertices[] = {
         // positions
         -1.0f,  1.0f, -1.0f,
@@ -146,17 +147,16 @@ int main() {
 
     std::vector<std::string> faces
     {
-        "resources/textures/middle.jpg", // right
-        "resources/textures/middle.jpg", // left
-        "resources/textures/top.jpg",
-        "resources/textures/bottom.jpg",
-        "resources/textures/middle.jpg", // front
-        "resources/textures/middle.jpg"  // back
+        "resources/textures/skybox/middle1.jpg",
+        "resources/textures/skybox/middle2.jpg",
+        "resources/textures/skybox/top.jpg",
+        "resources/textures/skybox/bottom.jpg",
+        "resources/textures/skybox/middle1.jpg",
+        "resources/textures/skybox/middle2.jpg"
     };
-    // TODO
+
     unsigned int skyboxTexture = loadCubemap(faces);
 
-    // TODO
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
 
@@ -200,29 +200,14 @@ int main() {
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // TODO: DRAW SKYBOX FIRST
-        glDepthMask(GL_FALSE);
-        skyboxShader.use();
-
+        // SET THE VIEW AND PROJECTION MATRIXES
         glm::mat4 view          = glm::mat4(1.0f);
         glm::mat4 projection    = glm::mat4(1.0f);
         view  = camera.GetViewMatrix();
-        view = glm::mat4(glm::mat3(view));
         projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        skyboxShader.setMat4("view", view);
-        skyboxShader.setMat4("projection", projection);
-
-        glBindVertexArray(skyboxVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glDepthMask(GL_TRUE);
-
-        view  = camera.GetViewMatrix();
 
         // DRAW THE COTTAGE
         ourShader.use();
-
 
         glm::mat4 m = glm::mat4(1.0f);
         m = glm::translate(m, cottagePos);
@@ -299,7 +284,23 @@ int main() {
             vodooDoll.Draw(ourShader);
         }
 
-        // TODO: DRAW SKYBOX LAST
+        glDepthMask(GL_FALSE);
+        glDepthFunc(GL_LEQUAL);
+        skyboxShader.use();
+
+        view  = camera.GetViewMatrix();
+        view = glm::mat4(glm::mat3(view));
+        projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        skyboxShader.setMat4("view", view);
+        skyboxShader.setMat4("projection", projection);
+
+        glBindVertexArray(skyboxVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glDepthFunc(GL_LESS);
+        glDepthMask(GL_TRUE);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
